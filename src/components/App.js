@@ -6,8 +6,7 @@ import QuestionList from "./QuestionList";
 function App() {
   const [page, setPage] = useState("List");
   const [questions, setQuestions] = useState([]);
-
-  // Fetch questions when the component mounts
+  
   useEffect(() => {
     fetch("http://localhost:4000/questions")
       .then((res) => {

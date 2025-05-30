@@ -3,7 +3,7 @@ import QuestionItem from "./QuestionItem";
 
 function QuestionList({ questions, onDeleteQuestion, onUpdateQuestion }) {
   if (!questions) {
-    return <p>Loading questions...</p>; // Or some other loading state
+    return <p>Loading questions...</p>;
   }
 
   return (
