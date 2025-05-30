@@ -1,25 +1,62 @@
 import React, { useState } from "react";
 
-function QuestionForm(props) {
+function QuestionForm({ onAddQuestion }) { // Renamed props to onAddQuestion to match App.js
   const [formData, setFormData] = useState({
     prompt: "",
     answer1: "",
     answer2: "",
     answer3: "",
     answer4: "",
-    correctIndex: 0,
+    correctIndex: "0", // Initialize as string to match select value
   });
 
   function handleChange(event) {
+    const { name, value } = event.target;
     setFormData({
       ...formData,
-      [event.target.name]: event.target.value,
+      [name]: value,
     });
   }
 
   function handleSubmit(event) {
     event.preventDefault();
-    console.log(formData);
+    
+    // Prepare the data for the API
+    const newQuestion = {
+      prompt: formData.prompt,
+      answers: [
+        formData.answer1,
+        formData.answer2,
+        formData.answer3,
+        formData.answer4,
+      ].filter(answer => answer !== ""), // Filter out empty answers if desired, or ensure 4 are always sent
+      correctIndex: parseInt(formData.correctIndex, 10),
+    };
+
+    // Basic validation: ensure there's a prompt
+    if (!newQuestion.prompt.trim()) {
+        alert("Please enter a prompt for the question.");
+        return;
+    }
+    // Basic validation: ensure there are at least two answers, for example.
+    // Adjust as per your application's requirements.
+    if (newQuestion.answers.filter(ans => ans.trim() !== "").length < 2) {
+        alert("Please provide at least two answers.");
+        return;
+    }
+
+
+    onAddQuestion(newQuestion); // Call the function passed from App.js
+
+    // Reset form (optional)
+    setFormData({
+      prompt: "",
+      answer1: "",
+      answer2: "",
+      answer3: "",
+      answer4: "",
+      correctIndex: "0",
+    });
   }
 
   return (
@@ -33,6 +70,7 @@ function QuestionForm(props) {
             name="prompt"
             value={formData.prompt}
             onChange={handleChange}
+            required // Added required
           />
         </label>
         <label>
@@ -42,6 +80,7 @@ function QuestionForm(props) {
             name="answer1"
             value={formData.answer1}
             onChange={handleChange}
+            required // Added required
           />
         </label>
         <label>
@@ -51,6 +90,7 @@ function QuestionForm(props) {
             name="answer2"
             value={formData.answer2}
             onChange={handleChange}
+            required // Added required
           />
         </label>
         <label>
@@ -78,10 +118,11 @@ function QuestionForm(props) {
             value={formData.correctIndex}
             onChange={handleChange}
           >
-            <option value="0">{formData.answer1}</option>
-            <option value="1">{formData.answer2}</option>
-            <option value="2">{formData.answer3}</option>
-            <option value="3">{formData.answer4}</option>
+            {/* Dynamically generate options if answers can be empty, or ensure they are not */}
+            {formData.answer1 && <option value="0">{formData.answer1}</option>}
+            {formData.answer2 && <option value="1">{formData.answer2}</option>}
+            {formData.answer3 && <option value="2">{formData.answer3}</option>}
+            {formData.answer4 && <option value="3">{formData.answer4}</option>}
           </select>
         </label>
         <button type="submit">Add Question</button>
